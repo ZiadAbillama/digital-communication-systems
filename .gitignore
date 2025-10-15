@@ -1,0 +1,6 @@
+# Ignore autosave files
+*.asv
+*.m~
+*.mat
+*.fig
+.DS_Store
