@@ -1,21 +1,21 @@
-function [t_rec, x_rec] = reconstruct(t_sample, x_sample, t_rec)
-% reconstruct - Reconstruct signal from samples using manual sinc interpolation
+function xrcon = reconstruct(t, x_sample, fs)
+% RECONSTRUCT - Reconstructs a signal from its samples using sinc interpolation.
+%
 % Inputs:
-%   t_sample - sampled time points
-%   x_sample - sampled signal values
-%   t_rec    - desired fine time vector for reconstruction
-% Outputs:
-%   t_rec    - reconstruction time vector
-%   x_rec    - reconstructed signal values
+%   t         : Continuous-time vector for reconstruction
+%   x_sample  : Sampled signal values
+%   fs        : Sampling frequency
+%
+% Output:
+%   xrcon     : Reconstructed signal
 
-    Ts = t_sample(2) - t_sample(1);  % Sampling interval
-    fs = 1 / Ts;                    % Sampling frequency
-    x_rec = zeros(size(t_rec));      % Initialize reconstructed signal
+    Ts = 1 / fs;                           % Sampling period
+    n = 0:length(x_sample)-1;              % Sample indices
+    t_sample = n * Ts;                     % Sample times
 
-    % Define custom sinc function
-    sinc_custom = @(x) sin(pi*x)./(pi*x);
-    
-    for n = 1:length(t_sample)
-        x_rec = x_rec + x_sample(n) * sinc_custom(fs * (t_rec - t_sample(n)));
+    % Sinc reconstruction
+    xrcon = zeros(size(t));
+    for k = 1:length(x_sample)
+        xrcon = xrcon + x_sample(k) * sinc(fs * (t - t_sample(k)));
     end
 end
