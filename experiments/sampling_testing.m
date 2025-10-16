@@ -1,53 +1,44 @@
+% SAMPLE_TESTING - Visualizes sampling below and above Nyquist
+% EECE 442 - Part I
+
+clear; close all; clc;
+
+% -------------------------------------------------------------------------
 % Signal Definition
-t = linspace(0, 1, 1000);
-xt = cos(2*pi*3*t) + 0.5*cos(2*pi*7*t);
+% -------------------------------------------------------------------------
+f0 = 100;                % Signal frequency (Hz)
+t = 0:1e-5:0.05;         % "Continuous" reference time
+x = cos(2*pi*f0*t);      % Original signal
 
-f_max = 7;  % Maximum frequency in the signal
+fN = 2*f0;               % Nyquist frequency
+fs_below = 0.5 * fN;     % Below Nyquist
+fs_above = 2 * fN;       % Above Nyquist
 
-%Under-sampling (fs = 0.5 * f_max = 3.5 Hz)
-fs1 = 0.5 * f_max;
-[t_sample1, x_sample1] = sample(t, xt, fs1);
-
-figure;
-plot(t, xt, 'b', 'LineWidth', 1.5); hold on;
-stem(t_sample1, x_sample1, 'r', 'filled');
-xlabel('Time (s)'); ylabel('Amplitude');
-title('Under-sampling at 0.5 × f_{max} = 3.5 Hz');
-legend('Original Signal', 'Sampled Points');
-grid on;
-
-%Aliasing Zone (fs = f_max = 7 Hz)
-fs2 = f_max;
-[t_sample2, x_sample2] = sample(t, xt, fs2);
+% -------------------------------------------------------------------------
+% Case 1: Below Nyquist
+% -------------------------------------------------------------------------
+[tb, xb] = sample(t, x, fs_below);
 
 figure;
-plot(t, xt, 'b', 'LineWidth', 1.5); hold on;
-stem(t_sample2, x_sample2, 'r', 'filled');
+plot(t, x, 'b', 'LineWidth', 1.2); hold on;        % Original signal in blue
+stem(tb, xb, 'r', 'filled');                       % Samples in red
+title(sprintf('Sampling Below Nyquist (fs = %.1f Hz)', fs_below));
 xlabel('Time (s)'); ylabel('Amplitude');
-title('Sampling at f_{max} = 7 Hz (Aliasing)');
-legend('Original Signal', 'Sampled Points');
+legend('Original Signal', 'Samples');
 grid on;
 
-%Nyquist Rate (fs = 2 * f_max = 14 Hz)
-fs3 = 2 * f_max;
-[t_sample3, x_sample3] = sample(t, xt, fs3);
+% -------------------------------------------------------------------------
+% Case 2: Above Nyquist
+% -------------------------------------------------------------------------
+[ta, xa] = sample(t, x, fs_above);
 
 figure;
-plot(t, xt, 'b', 'LineWidth', 1.5); hold on;
-stem(t_sample3, x_sample3, 'r', 'filled');
+plot(t, x, 'b', 'LineWidth', 1.2); hold on;        % Original signal in blue
+stem(ta, xa, 'r', 'filled');                       % Samples in red
+title(sprintf('Sampling Above Nyquist (fs = %.1f Hz)', fs_above));
 xlabel('Time (s)'); ylabel('Amplitude');
-title('Critical Sampling at 2 × f_{max} = 14 Hz (Nyquist Rate)');
-legend('Original Signal', 'Sampled Points');
+legend('Original Signal', 'Samples');
 grid on;
 
-% Oversampling (fs = 4 * f_max = 28 Hz)
-fs4 = 4 * f_max;
-[t_sample4, x_sample4] = sample(t, xt, fs4);
-
-figure;
-plot(t, xt, 'b', 'LineWidth', 1.5); hold on;
-stem(t_sample4, x_sample4, 'r', 'filled');
-xlabel('Time (s)'); ylabel('Amplitude');
-title('Over-sampling at 4 × f_{max} = 28 Hz');
-legend('Original Signal', 'Sampled Points');
-grid on;
+disp('> Below Nyquist: Aliasing visible (samples too sparse)');
+disp('> Above Nyquist: Proper sampling (samples follow signal)');
