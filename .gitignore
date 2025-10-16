@@ -1,6 +1,27 @@
-# Ignore autosave files
+# MATLAB autosave and backup files
 *.asv
 *.m~
 *.mat
+*.mlx
 *.fig
+*.slxc
+
+# Simulink cache and generated code
+slprj/
+sccprj/
+codegen/
+*.mex*
+
+# OS-specific junk
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary or log files
+*.log
+*.bak
+*.tmp
+*.autosave
+
+# OneDrive sync files
+~$*

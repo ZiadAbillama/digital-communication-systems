@@ -1,12 +1,10 @@
 function [xhat, ck] = ffs(xt, t, n, T)
 % ffs - Finite Fourier Series approximation of a time-limited signal
-%
 % Inputs:
 %   xt : row vector of signal values x(t)
 %   t  : corresponding time vector
 %   n  : number of harmonics on each side (total 2n+1 terms)
 %   T  : period used for the Fourier series
-%
 % Outputs:
 %   xhat : reconstructed signal using the finite series
 %   ck   : Fourier coefficients c_k (k = -n:n)

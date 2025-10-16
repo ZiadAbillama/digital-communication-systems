@@ -20,7 +20,6 @@ for i = 1:length(n_values)
 end
 sgtitle('Finite Fourier Series Approximations for different n');
 
-% ---------------------------------------------------------------
 % error analysis  E(n,T) vs n
 E = zeros(size(n_values));
 for i = 1:length(n_values)
@@ -34,7 +33,6 @@ ylabel('Error energy E(n,T)');
 title('Approximation error vs n');
 grid on;
 
-% ---------------------------------------------------------------
 % effect of varying T (keep n large)
 T_values = [0.5, 1, 2];
 n_large = 30;
