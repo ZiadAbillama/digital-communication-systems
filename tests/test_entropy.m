@@ -24,6 +24,6 @@ thr = linspace(xmin, xmax, M+1); thr = thr(2:end-1);
 lvl = linspace(xmin+(xmax-xmin)/(2*M), xmax-(xmax-xmin)/(2*M), M);
 xq = quan(x, thr, lvl);
 H3 = entropy(xq);
-fprintf('Entropy of quantized sine wave = %.4f bits/symbol\n', H3);
+fprintf('Entropy of quantized signal = %.4f bits/symbol\n', H3);
 
 disp('✅ test_entropy.m executed successfully.');
