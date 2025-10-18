@@ -1,61 +1,50 @@
-function [encoded_stream, compression_ratio, avg_bits_per_symbol] = lz77_encode(x, window_size, lookahead_size)
-% Function: lz77_encode.m
+function [dict, avglen, eff, Hk_per_symbol] = block_huffman(x, k)
+% Function: block_huffman.m
 % Description:
-%   Simple LZ77 dictionary encoder for discrete input sequence x.
-%   Returns encoded triplets [offset, length, nextSymbol].
+%   Performs block-based Huffman coding on sequence x.
+%   Groups symbols into blocks of length k, estimates probabilities,
+%   builds Huffman codes, and returns the average codeword length per symbol.
 %
 % Inputs:
-%   x              - input sequence (e.g. quantized samples)
-%   window_size    - size of search window (e.g. 20–50)
-%   lookahead_size - size of lookahead buffer (e.g. 10)
+%   x - vector of discrete symbols (e.g. quantized levels)
+%   k - block length (e.g. 2, 3, or 4)
 %
 % Outputs:
-%   encoded_stream        - Nx3 matrix [offset, match_length, next_symbol]
-%   compression_ratio     - ratio of original length / encoded length (approx.)
-%   avg_bits_per_symbol   - average bits per symbol (approx.)
+%   dict            - Huffman dictionary for symbol blocks
+%   avglen          - average code length (bits per *symbol*)
+%   eff             - efficiency (%) = (H_k/k) / avglen * 100
+%   Hk_per_symbol   - entropy rate per symbol (H_k/k)
 
-x = x(:)';  % ensure row vector
-n = length(x);
-encoded_stream = [];
+x = x(:)';   % row vector
 
-i = 1;
-while i <= n
-    search_start = max(1, i - window_size);
-    search_buffer = x(search_start:i-1);
-    lookahead_buffer = x(i:min(i+lookahead_size-1, n));
-
-    best_offset = 0;
-    best_length = 0;
-
-    for offset = 1:length(search_buffer)
-        match_length = 0;
-        while match_length < length(lookahead_buffer) && ...
-              (length(search_buffer) - offset + 1 + match_length) <= length(search_buffer) && ...
-              search_buffer(length(search_buffer) - offset + 1 + match_length) == lookahead_buffer(match_length + 1)
-            match_length = match_length + 1;
-        end
-
-        if match_length > best_length
-            best_length = match_length;
-            best_offset = offset;
-        end
-    end
-
-    if i + best_length <= n
-        next_symbol = x(i + best_length);
-    else
-        next_symbol = NaN;
-    end
-
-    encoded_stream = [encoded_stream; best_offset, best_length, next_symbol];
-
-    i = i + best_length + 1;
+% 1. Form symbol blocks of length k
+numBlocks = floor(length(x)/k);
+if numBlocks < 1
+    error('Input too short for block length k=%d', k);
+end
+blocks = reshape(x(1:numBlocks*k), k, numBlocks)';
+% Represent each block as a string key
+blockKeys = cell(numBlocks,1);
+for i = 1:numBlocks
+    blockKeys{i} = mat2str(blocks(i,:));
 end
 
-% Rough compression metrics
-bits_per_token = ceil(log2(window_size)) + ceil(log2(lookahead_size)) + 8; % approximate bits per triplet
-total_bits = size(encoded_stream,1) * bits_per_token;
-avg_bits_per_symbol = total_bits / n;
-compression_ratio = (n * 8) / total_bits;
+% 2. Compute empirical probabilities
+[uniqueBlocks, ~, idx] = unique(blockKeys);
+counts = accumarray(idx, 1);
+p = counts / sum(counts);
+
+% 3. Build Huffman dictionary
+dict = huffmandict(uniqueBlocks, p);
+
+% 4. Average codeword length (bits per symbol)
+code_lengths = cellfun(@length, dict(:,2));
+Lbar_per_block = sum(p .* code_lengths);   % bits per *block*
+avglen = Lbar_per_block / k;               % bits per *symbol*
+
+% 5. Compute block entropy and efficiency
+Hk = -sum(p .* log2(p));                   % bits per *block*
+Hk_per_symbol = Hk / k;                    % bits per *symbol*
+eff = 100 * (Hk_per_symbol / avglen);
 
 end
