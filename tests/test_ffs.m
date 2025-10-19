@@ -1,24 +1,21 @@
 % Test: test_ffs.m
-% Purpose: Verify finite Fourier series approximation.
+n = 20;       % number of harmonics on each side
+T = 2;        % chosen approximation period (seconds)
 
-% Define time and signal
-t = linspace(-1, 1, 2000);
-xt = sign(sin(2*pi*2*t));  
+% Define time over exactly one analysis period and the signal on it
+t  = linspace(-T/2, T/2, 2000);
+xt = sign(sin(2*pi*2*t));   % 2 Hz square-like signal (true period = 0.5 s)
 
-% Parameters
-n = 10; % number of harmonics
-T = 2;  % fundamental period
-
+% FFS approximation (integrates over [-T/2, T/2] internally)
 [xhat, ck] = ffs(xt, t, n, T);
 
-% Plot the original and approximated signals
+% Plot
 figure;
 plot(t, xt, 'b', 'LineWidth', 1.2); hold on;
 plot(t, xhat, 'r--', 'LineWidth', 1.2);
-legend('Original', sprintf('FFS Approximation (n=%d)', n));
-xlabel('Time (s)');
-ylabel('Amplitude');
-title('Finite Fourier Series Approximation');
+legend('Original', sprintf('FFS Approximation (n=%d)', n), 'Location','best');
+xlabel('Time (s)'); ylabel('Amplitude');
+title('Finite Fourier Series Approximation (single-period domain)');
 grid on;
 
-disp('✅ test_ffs.m executed successfully');
+disp('test_ffs.m executed successfully');
