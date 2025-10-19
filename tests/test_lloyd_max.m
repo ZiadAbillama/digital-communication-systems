@@ -3,8 +3,6 @@
 %   Compare Uniform and Lloyd–Max quantization on the same input signal.
 %   (Fulfills requirements f, g, and h from the project specification.)
 
-clc; clear; close all;
-
 fs = 1000;              % Sampling frequency
 t = 0:1/fs:1;           % 1 second duration
 x = sin(2*pi*3*t) + 0.3*sin(2*pi*7*t);  % Example composite waveform
