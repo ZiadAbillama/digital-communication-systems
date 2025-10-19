@@ -1,39 +1,42 @@
 function [xhat, ck] = ffs(xt, t, n, T)
-% Function: ffs.m
-% Description:
-%   Computes the finite Fourier series (FFS) approximation of a
-%   time-limited signal x(t).
-%
+% Finite Fourier Series over one time-limited chunk of length T.
 % Inputs:
-%   xt - original signal values (row or column vector)
-%   t  - time samples corresponding to xt
-%   n  - number of Fourier terms on each side (positive/negative)
-%   T  - period of the approximation (seconds)
+%   xt - original signal values
+%   t  - corresponding time samples (should cover at least one period)
+%   n  - number of harmonics on each side
+%   T  - period of the approximation
 %
 % Outputs:
-%   xhat - reconstructed/approximated signal from FFS
+%   xhat - reconstructed (approximate) signal
 %   ck   - Fourier coefficients for k = -n:n
 
 % Ensure row vectors
-t = t(:).';
+t  = t(:).';
 xt = xt(:).';
 
-% Initialize coefficient vector
-k = -n:n;
-ck = zeros(size(k));
+% Restrict to one analysis window [-T/2, T/2]
+mask = (t >= -T/2) & (t <= T/2);
+tc   = t(mask);
+xc   = xt(mask);
 
-% Compute Fourier coefficients numerically using trapezoidal integration
-for i = 1:length(k)
-    ck(i) = (1/T) * trapz(t, xt .* exp(-1j * 2*pi*k(i) * t / T));
+if numel(tc) < 2
+    error('ffs:NotEnoughSamples','Need ≥2 samples inside [-T/2, T/2].');
 end
 
-% Reconstruct the signal using the computed coefficients
+k  = -n:n;
+ck = zeros(1, numel(k));
+
+% Compute Fourier coefficients numerically
+for i = 1:numel(k)
+    ck(i) = (1/T) * trapz(tc, xc .* exp(-1j * 2*pi * k(i) * tc / T));
+end
+
+% Reconstruct the signal over the full time axis
 xhat = zeros(size(t));
-for i = 1:length(k)
-    xhat = xhat + ck(i) * exp(1j * 2*pi*k(i) * t / T);
+for i = 1:numel(k)
+    xhat = xhat + ck(i) * exp(1j * 2*pi * k(i) * t / T);
 end
 
-% Keep only the real part (original signal is real-valued)
-xhat = real(xhat);
+xhat = real(xhat); % keep real part
 
 end
