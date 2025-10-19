@@ -1,8 +1,6 @@
 % Test: test_ffs.m
 % Purpose: Verify finite Fourier series approximation.
 
-clc; clear; close all;
-
 % Define time and signal
 t = linspace(-1, 1, 2000);
 xt = sign(sin(2*pi*2*t));  
