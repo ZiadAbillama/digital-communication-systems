@@ -2,8 +2,6 @@
 % Purpose:
 %   Verify Huffman encoding and compare to entropy.
 
-clc; clear; close all;
-
 % Example 1: simple discrete sequence
 fprintf('Example 1: Discrete source sequence');
 x = [1 1 1 2 2 3 3 3 3 3];
