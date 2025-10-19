@@ -3,11 +3,9 @@
 %   Compute and plot the Fourier Series approximation error E(n, T)
 %   both as a function of n (number of harmonics) and T (period).
 
-clc; clear; close all;
-
 % Define time and original signal
 t = linspace(-1, 1, 2000);
-xt = square(2*pi*2*t); % 2 Hz square wave signal
+xt = sign(sin(2*pi*2*t));  
 
 % Case 1: Fixed T, vary n
 T_fixed = 2;                         % period (seconds)
