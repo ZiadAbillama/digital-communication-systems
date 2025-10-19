@@ -1,9 +1,6 @@
 % Test: test_quan_mse.m
 % Purpose:
 %   Analyze how Mean Squared Error (MSE) changes with number of quantization levels M.
-
-clc; clear; close all;
-
 % Generate a test signal
 t = 0:0.001:1;
 x = sin(2*pi*3*t); % 3 Hz sine wave
