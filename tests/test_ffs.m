@@ -5,7 +5,7 @@ clc; clear; close all;
 
 % Define time and signal
 t = linspace(-1, 1, 2000);
-xt = square(2*pi*2*t); % periodic signal with discontinuities
+xt = sign(sin(2*pi*2*t));  
 
 % Parameters
 n = 10; % number of harmonics
