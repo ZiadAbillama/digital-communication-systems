@@ -1,24 +1,33 @@
-% Test: test_sample.m
-% Purpose: Verify that sample.m performs correct signal sampling.
+% SAMPLE_TESTING - Visualizes sampling below and above Nyquist
 
-clc; clear; close all;
+% Signal Definition
+f0 = 100;                % Signal frequency (Hz)
+t = 0:1e-5:0.05;         % Continuous reference time
+x = cos(2*pi*f0*t);      % Original signal
 
-% Generate a simple test signal (10 Hz cosine)
-t = 0:0.001:1; 
-xt = cos(2*pi*10*t);
+fN = 2*f0;               % Nyquist frequency
+fs_below = 0.5 * fN;     % Below Nyquist
+fs_above = 2 * fN;       % Above Nyquist
+% Case 1: Below Nyquist
 
-% Sampling rate
-fs = 20; % Hz (above Nyquist)
-[t_sample, x_sample] = sample(t, xt, fs);
+[tb, xb] = sample(t, x, fs_below);
 
-% Plot the results
 figure;
-plot(t, xt, 'b', 'LineWidth', 1.2); hold on;
-stem(t_sample, x_sample, 'r', 'filled');
-legend('Original', 'Sampled');
-xlabel('Time (s)');
-ylabel('Amplitude');
-title('Sampling Test: sample.m');
+plot(t, x, 'b', 'LineWidth', 1.2); hold on;        % Original signal 
+stem(tb, xb, 'r', 'filled');                       % Samples
+title(sprintf('Sampling Below Nyquist (fs = %.1f Hz)', fs_below));
+xlabel('Time (s)'); ylabel('Amplitude');
+legend('Original Signal', 'Samples');
 grid on;
 
-disp('✅ test_sample.m executed successfully');
+
+% Case 2: Above Nyquist
+[ta, xa] = sample(t, x, fs_above);
+
+figure;
+plot(t, x, 'b', 'LineWidth', 1.2); hold on;        % Original signal 
+stem(ta, xa, 'r', 'filled');                       % Samples
+title(sprintf('Sampling Above Nyquist (fs = %.1f Hz)', fs_above));
+xlabel('Time (s)'); ylabel('Amplitude');
+legend('Original Signal', 'Samples');
+grid on;
