@@ -1,4 +1,4 @@
-# EECE 442: Digital Communication Systems Project
+#EECE 442: Digital Communication Systems Project
 
 A comprehensive MATLAB implementation of a complete digital communication system, covering signal sampling, quantization, source coding, channel coding, modulation, and equalization techniques.
 
